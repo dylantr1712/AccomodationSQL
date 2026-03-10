@@ -86,11 +86,3 @@ psql -d accommodation_sql -f submission/analytics_accommodation_type_distributio
 - **Inventory distribution:** province-level pivot across accommodation types.
 - **Search procedure:** filters accommodations by capacity + required amenity/facility lists.
 
-## Portfolio notes
-If showcasing this on GitHub/LinkedIn:
-1. Add 1–2 screenshots of query outputs in `submission/` and reference them here.
-2. Include short “business insight” bullets under each analytics script.
-3. Pin this repository and summarize outcomes in your profile (schema design, ETL loading, PL/pgSQL, analytics SQL).
-
----
-If useful, I can also generate a one-page **project summary** version of this README for recruiters.
