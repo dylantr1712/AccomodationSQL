@@ -1,0 +1,120 @@
+CREATE TABLE PROVINCE (
+    ProvinceID INT PRIMARY KEY,
+    ProvinceName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE ACCOMMODATION_TYPE (
+    AccommodationTypeID VARCHAR(10) PRIMARY KEY,
+    AccommodationType VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE AMENITIES (
+    AmenityID VARCHAR(10) PRIMARY KEY,
+    AmenityName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE FACILITIES (
+    FacilityID VARCHAR(10) PRIMARY KEY,
+    FacilityName VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE GUEST_ACCOUNT (
+    GuestIDCardNumber BIGINT PRIMARY KEY,
+    UserName VARCHAR(50) NOT NULL,
+    Password VARCHAR(50) NOT NULL,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    DOB DATE NOT NULL,
+    PhoneNumber BIGINT NOT NULL,
+    Email VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE OWNER_ACCOUNT (
+    OwnerIDCardNumber BIGINT PRIMARY KEY,
+    UserName VARCHAR(50) NOT NULL,
+    Password VARCHAR(50) NOT NULL,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    DOB DATE NOT NULL,
+    PhoneNumber BIGINT NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    BankAccountNumber BIGINT NOT NULL
+);
+
+CREATE TABLE VOUCHER_COUPON (
+    VCCode VARCHAR(20) PRIMARY KEY,
+    DiscountValue DECIMAL(10,2) NOT NULL,
+    DiscountUnit VARCHAR(10) NOT NULL,
+    ValidFrom DATE NOT NULL,
+    ValidTo DATE NOT NULL
+);
+
+CREATE TABLE CITY_DISTRICT (
+    CityDistrictID INT PRIMARY KEY,
+    CityDistrictName VARCHAR(100) NOT NULL,
+    ProvinceID INT NOT NULL,
+    FOREIGN KEY (ProvinceID) REFERENCES PROVINCE(ProvinceID)
+);
+
+CREATE TABLE ACCOMMODATION (
+    AccommodationID VARCHAR(20) PRIMARY KEY,
+    AccommodationName VARCHAR(255),
+    OwnerIDCardNumber BIGINT NOT NULL,
+    CityDistrictID INT NOT NULL,
+    StreetAddress VARCHAR(255) NOT NULL,
+    AccommodationTypeID VARCHAR(10) NOT NULL,
+    NumberOfRooms INT NOT NULL,
+    Capacity INT NOT NULL,
+    PricePerNight DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (OwnerIDCardNumber) REFERENCES OWNER_ACCOUNT(OwnerIDCardNumber),
+    FOREIGN KEY (CityDistrictID) REFERENCES CITY_DISTRICT(CityDistrictID),
+    FOREIGN KEY (AccommodationTypeID) REFERENCES ACCOMMODATION_TYPE(AccommodationTypeID)
+);
+
+CREATE TABLE BOOKING (
+    BookingID VARCHAR(20) PRIMARY KEY,
+    GuestIDCardNumber BIGINT NOT NULL,
+    AccommodationID VARCHAR(20) NOT NULL,
+    ReservedCheckInTime TIMESTAMP NOT NULL,
+    CheckInTime TIMESTAMP,
+    CheckOutTime TIMESTAMP,
+    VCCode VARCHAR(20),
+    DateTimeCancel TIMESTAMP,
+    FOREIGN KEY (GuestIDCardNumber) REFERENCES GUEST_ACCOUNT(GuestIDCardNumber),
+    FOREIGN KEY (AccommodationID) REFERENCES ACCOMMODATION(AccommodationID),
+    FOREIGN KEY (VCCode) REFERENCES VOUCHER_COUPON(VCCode)
+);
+
+CREATE TABLE PAYMENT (
+    TransactionID VARCHAR(20) PRIMARY KEY,
+    BookingID VARCHAR(20) NOT NULL UNIQUE,
+    PaymentType VARCHAR(50) NOT NULL,
+    BankAccountNumber BIGINT NOT NULL,
+    FOREIGN KEY (BookingID) REFERENCES BOOKING(BookingID)
+);
+
+CREATE TABLE AMENITIES_INCLUDED (
+    AccommodationID VARCHAR(20),
+    AmenityID VARCHAR(10),
+    PRIMARY KEY (AccommodationID, AmenityID),
+    FOREIGN KEY (AccommodationID) REFERENCES ACCOMMODATION(AccommodationID),
+    FOREIGN KEY (AmenityID) REFERENCES AMENITIES(AmenityID)
+);
+
+CREATE TABLE FACILITIES_INCLUDED (
+    AccommodationID VARCHAR(20),
+    FacilityID VARCHAR(10),
+    PRIMARY KEY (AccommodationID, FacilityID),
+    FOREIGN KEY (AccommodationID) REFERENCES ACCOMMODATION(AccommodationID),
+    FOREIGN KEY (FacilityID) REFERENCES FACILITIES(FacilityID)
+);
+
+CREATE TABLE FEEDBACK (
+    GuestIDCardNumber BIGINT,
+    AccommodationID VARCHAR(20),
+    Rating VARCHAR(10) NOT NULL,
+    Comment TEXT,
+    PRIMARY KEY (GuestIDCardNumber, AccommodationID),
+    FOREIGN KEY (GuestIDCardNumber) REFERENCES GUEST_ACCOUNT(GuestIDCardNumber),
+    FOREIGN KEY (AccommodationID) REFERENCES ACCOMMODATION(AccommodationID)
+);
